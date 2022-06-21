@@ -9,158 +9,103 @@
       <!-- 搜索与添加区域 -->
       <el-row :gutter="20">
         <el-col :span="7">
-          <el-input placeholder="请输入内容"
-                    v-model="queryInfo.query"
-                    clearable
-                    @clear="getUserList">
+          <el-input placeholder="请输入内容" v-model="queryInfo.query" clearable @clear="getUserList">
             <template #append>
-              <el-button icon="Search"
-                         @click="getUserList" />
+              <el-button icon="Search" @click="getUserList" />
             </template>
           </el-input>
         </el-col>
         <el-col :span="4">
-          <el-button type="primary"
-                     @click="addDialogVisble = true">添加用户</el-button>
+          <el-button type="primary" @click="addDialogVisble = true">添加用户</el-button>
         </el-col>
       </el-row>
       <!-- 表格区域 -->
-                :stripe="true"
-                :border="true">
+      <el-table :data="userList" :stripe="true" :border="true">
         <el-table-column type="index"></el-table-column>
-        <el-table-column prop="username"
-                         label="姓名" />
-        <el-table-column prop="email"
-                         label="邮箱" />
-        <el-table-column prop="mobile"
-                         label="电话" />
-        <el-table-column prop="role_name"
-                         label="角色" />
+        <el-table-column prop="username" label="姓名" />
+        <el-table-column prop="email" label="邮箱" />
+        <el-table-column prop="mobile" label="电话" />
+        <el-table-column prop="role_name" label="角色" />
         <el-table-column label="状态">
           <template slot-scope="scope">
-            <el-switch v-model="scope.row.mg_state"
-                       @change="userStateChanged(scope.row)">
+            <el-switch v-model="scope.row.mg_state" @change="userStateChanged(scope.row)">
             </el-switch>
           </template>
         </el-table-column>
-        <el-table-column label="操作"
-                         width="200px">
+        <el-table-column label="操作" width="200px">
           <template slot-scope="scope">
-            <el-button type="primary"
-                       icon="Edit"
-                       @click="showEditDialog(scope.row.id)" />
-            <el-button type="danger"
-                       icon="Delete"
-                       @click="removeUserById(scope.row.id)" />
-            <el-tooltip content="修改角色"
-                        placement="top"
-                        :enterable="false">
-              <el-button type="warning"
-                         icon="Setting"
-                         @click="setRole(scope.row)" />
+            <el-button type="primary" icon="Edit" @click="showEditDialog(scope.row.id)" />
+            <el-button type="danger" icon="Delete" @click="removeUserById(scope.row.id)" />
+            <el-tooltip content="修改角色" placement="top" :enterable="false">
+              <el-button type="warning" icon="Setting" @click="setRole(scope.row)" />
             </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination v-model:currentPage="queryInfo.pagenum"
-                     v-model:page-size="queryInfo.pagesize"
-                     :page-sizes="[1, 2, 5, 10]"
-                     layout="total, sizes, prev, pager, next, jumper"
-                     :total="total"
-                     @size-change="handleSizeChange"
-                     @current-change="handleCurrentChange" />
+      <el-pagination :currentPage="queryInfo.pagenum" :page-size="queryInfo.pagesize" :page-sizes="[1, 2, 5, 10]"
+        layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange"
+        @current-change="handleCurrentChange" />
     </el-card>
     <!-- 添加用户对话框 -->
-    <el-dialog v-model="addDialogVisble"
-               title="添加用户"
-               width="30%"
-               @close="resetFormFileds">
+    <el-dialog v-model="addDialogVisble" title="添加用户" width="30%" @close="resetFormFileds">
       <!-- 用户表单 -->
-      <el-form ref="ruleFormRef"
-               :model="addForm"
-               :rules="addFormRules"
-               label-width="120px"
-               status-icon>
-        <el-form-item label="用户名"
-                      prop="username">
+      <el-form ref="ruleFormRef" :model="addForm" :rules="addFormRules" label-width="120px" status-icon>
+        <el-form-item label="用户名" prop="username">
           <el-input v-model="addForm.username" />
         </el-form-item>
-        <el-form-item label="密码"
-                      prop="password">
+        <el-form-item label="密码" prop="password">
           <el-input v-model="addForm.password" />
         </el-form-item>
-        <el-form-item label="邮箱"
-                      prop="email">
+        <el-form-item label="邮箱" prop="email">
           <el-input v-model="addForm.email" />
         </el-form-item>
-        <el-form-item label="手机"
-                      prop="mobile">
+        <el-form-item label="手机" prop="mobile">
           <el-input v-model="addForm.mobile" />
         </el-form-item>
       </el-form>
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="addDialogVisble = false">取 消</el-button>
-          <el-button type="primary"
-                     @click="addUser">确 定</el-button>
+          <el-button type="primary" @click="addUser">确 定</el-button>
         </span>
       </template>
     </el-dialog>
     <!-- 修改用户对话框 -->
-    <el-dialog v-model="ditDialogVisiBle"
-               title="修改用户"
-               width="30%"
-               @close="ditDialogClosed()">
-      <el-form ref="editFormRef"
-               :model="editForm"
-               :rules="editFormRules"
-               label-width="70px">
-        <el-form-item label="用户名"
-                      prop="username">
-          <el-input v-model="editForm.username"
-                    disabled />
+    <el-dialog v-model="ditDialogVisiBle" title="修改用户" width="30%" @close="ditDialogClosed()">
+      <el-form ref="editFormRef" :model="editForm" :rules="editFormRules" label-width="70px">
+        <el-form-item label="用户名" prop="username">
+          <el-input v-model="editForm.username" disabled />
         </el-form-item>
-        <el-form-item label="邮箱"
-                      prop="email">
+        <el-form-item label="邮箱" prop="email">
           <el-input v-model="editForm.email" />
         </el-form-item>
-        <el-form-item label="手机"
-                      prop="mobile">
+        <el-form-item label="手机" prop="mobile">
           <el-input v-model="editForm.mobile" />
         </el-form-item>
       </el-form>
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="ditDialogVisiBle = false">取 消</el-button>
-          <el-button type="primary"
-                     @click="editUserInfo">确 定</el-button>
+          <el-button type="primary" @click="editUserInfo">确 定</el-button>
         </span>
       </template>
     </el-dialog>
 
     <!-- 修改角色对话框 -->
-    <el-dialog v-model="editRoledialogVisible"
-               title="分配角色"
-               width="50%"
-               @close="setRoledialogClosed">
+    <el-dialog v-model="editRoledialogVisible" title="分配角色" width="50%" @close="setRoledialogClosed">
       <div>
-        <p>当前用户:{{userInfo.username}}</p>
-        <p>当前角色:{{userInfo.role_name}}</p>
+        <p>当前用户:{{ userInfo.username }}</p>
+        <p>当前角色:{{ userInfo.role_name }}</p>
         <p>分配新角色:
-          <el-select v-model="selectedRoleId"
-                     placeholder="请选择">
-            <el-option v-for="item in rolesList"
-                       :key="item.id"
-                       :label="item.roleName"
-                       :value="item.id" />
+          <el-select v-model="selectedRoleId" placeholder="请选择">
+            <el-option v-for="item in rolesList" :key="item.id" :label="item.roleName" :value="item.id" />
           </el-select>
         </p>
       </div>
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="editRoledialogVisible = false">取 消</el-button>
-          <el-button type="primary"
-                     @click="saveRole">确 定</el-button>
+          <el-button type="primary" @click="saveRole">确 定</el-button>
         </span>
       </template>
     </el-dialog>
