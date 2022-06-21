@@ -25,7 +25,6 @@
         </el-col>
       </el-row>
       <!-- 表格区域 -->
-      <el-table :data="userList"
                 :stripe="true"
                 :border="true">
         <el-table-column type="index"></el-table-column>
@@ -38,7 +37,7 @@
         <el-table-column prop="role_name"
                          label="角色" />
         <el-table-column label="状态">
-          <template v-slot="scope">
+          <template slot-scope="scope">
             <el-switch v-model="scope.row.mg_state"
                        @change="userStateChanged(scope.row)">
             </el-switch>
@@ -46,7 +45,7 @@
         </el-table-column>
         <el-table-column label="操作"
                          width="200px">
-          <template v-slot="scope">
+          <template slot-scope="scope">
             <el-button type="primary"
                        icon="Edit"
                        @click="showEditDialog(scope.row.id)" />

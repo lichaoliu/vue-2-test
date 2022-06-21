@@ -1,7 +1,5 @@
-import {
-  createRouter,
-  createWebHistory
-} from 'vue-router'
+import Router from 'vue-router'
+import Vue from 'vue'
 import Login from './components/Login-Home.vue'
 import Home from './components/Home-LLC.vue'
 import Welcome from './components/Welcome-LLC.vue'
@@ -11,8 +9,9 @@ import Roles from './components/power/Roles-LLC.vue'
 import Cate from './components/goods/Cate-LLC.vue'
 import Params from './components/goods/Params-LLC.vue'
 
-const router = createRouter({
-  history: createWebHistory(),
+Vue.use(Router)
+
+export default new Router({
   routes: [{
     path: '/',
     redirect: '/login'
@@ -44,4 +43,3 @@ const router = createRouter({
     }]
   }]
 })
-export default router
