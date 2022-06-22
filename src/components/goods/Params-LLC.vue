@@ -7,93 +7,58 @@
     </el-breadcrumb>
     <el-card>
       <!-- 头部警告区域 -->
-      <el-alert title="注意: 只允许为第三季分类设置相关参数!"
-                type="warning"
-                :closable="false"
-                show-icon />
+      <el-alert title="注意: 只允许为第三季分类设置相关参数!" type="warning" :closable="false" show-icon />
       <el-row class="cat_opt">
         <el-col>
           <span>选择商品分类:</span>
-          <el-cascader v-model="selectedCateKeys"
-                       :options="cateList"
-                       :props="props"
-                       @change="handleChange" />
+          <el-cascader v-model="selectedCateKeys" :options="cateList" :props="props" @change="handleChange" />
         </el-col>
       </el-row>
       <!-- tab标签区域 -->
-      <el-tabs v-model="activeName"
-               @tab-change="handleTabClick">
-        <el-tab-pane label="动态参数"
-                     name="many">
+      <el-tabs v-model="activeName" @tab-click="handleTabClick">
+        <el-tab-pane label="动态参数" name="many">
           <!-- 添加动态参数 -->
-          <el-button type="primary"
-                     size="small"
-                     :disabled="isBtnDisabled"
-                     @click="addDialogVisible = true">添加参数</el-button>
+          <el-button type="primary" size="small" :disabled="isBtnDisabled" @click="addDialogVisible = true">添加参数
+          </el-button>
           <!-- 动态参数表格 -->
-          <el-table :data="manyTableData"
-                    :border="true"
-                    stripe>
+          <el-table :data="manyTableData" :border="true" stripe>
             <el-table-column type="expand">
-              <template v-slot="scope">
+              <template slot-scope="scope">
                 <!-- 显示参数标签 -->
-                <el-tag v-for="(item,i) in scope.row.attr_vals"
-                        :key="i"
-                        closable>
-                  {{item}}
+                <el-tag v-for="(item, i) in scope.row.attr_vals" :key="i" closable>
+                  {{ item }}
                 </el-tag>
                 <!-- 新增属性标签 -->
-                <el-input class="input-new-tag"
-                          v-if="scope.row.inputVisible"
-                          v-model="scope.row.inputValue"
-                          ref="saveTagInput"
-                          size="small"
-                          @keyup.enter="handleInputConfirm"
-                          @blur="handleInputConfirm">
+                <el-input class="input-new-tag" v-if="scope.row.inputVisible" v-model="scope.row.inputValue"
+                  ref="saveTagInput" size="small" @keyup.enter.native="handleInputConfirm(scope.row)"
+                  @blur="handleInputConfirm(scope.row)">
                 </el-input>
-                <el-button v-else
-                           size="small"
-                           @click="showInput(scope.row)">+ New Tag</el-button>
+                <el-button v-else size="small" @click="showInput(scope.row)">+ New Tag</el-button>
               </template>
             </el-table-column>
             <el-table-column type="index"></el-table-column>
-            <el-table-column label="参数名称"
-                             prop="attr_name"></el-table-column>
+            <el-table-column label="参数名称" prop="attr_name"></el-table-column>
             <el-table-column label="操作">
-              <template v-slot="scope">
-                <el-button type="primary"
-                           icon="Edit"
-                           @click="showEditDialog(scope.row.attr_id)">编 辑</el-button>
-                <el-button type="danger"
-                           icon="Delete"
-                           @click="deleteParam(scope.row.attr_id)">删 除</el-button>
+              <template slot-scope="scope">
+                <el-button type="primary" icon="Edit" @click="showEditDialog(scope.row.attr_id)">编 辑</el-button>
+                <el-button type="danger" icon="Delete" @click="deleteParam(scope.row.attr_id)">删 除</el-button>
               </template>
             </el-table-column>
           </el-table>
         </el-tab-pane>
-        <el-tab-pane label="静态参数"
-                     name="only">
+        <el-tab-pane label="静态参数" name="only">
           <!-- 添加静态参数 -->
-          <el-button type="primary"
-                     size="small"
-                     :disabled="isBtnDisabled"
-                     @click="addDialogVisible = true">添加参数</el-button>
+          <el-button type="primary" size="small" :disabled="isBtnDisabled" @click="addDialogVisible = true">添加参数
+          </el-button>
           <!-- 静态参数表格 -->
-          <el-table :data="onlyTableData"
-                    :border="true"
-                    stripe>
+          <el-table :data="onlyTableData" :border="true" stripe>
             <el-table-column type="expand"></el-table-column>
             <el-table-column type="index"></el-table-column>
-            <el-table-column label="属性名称"
-                             prop="attr_name"></el-table-column>
+            <el-table-column label="属性名称" prop="attr_name"></el-table-column>
             <el-table-column label="操作">
-              <template v-slot="scope">
-                <el-button type="primary"
-                           icon="Edit"
-                           @click="showEditDialog(scope.row.attr_id)">编 辑</el-button>
-                <el-button type="danger"
-                           icon="Delete"
-                           @click="deleteParam(scope.row.attr_id)">删 除</el-button>
+              <template slot-scope="scope">
+                <el-button type="primary" icon="Edit" @click="showEditDialog(scope.row.attr_id)">编 辑</el-button>
+                <el-button type="danger" icon="Delete" @click="deleteParam(scope.row.attr_id)">删 除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -101,50 +66,32 @@
       </el-tabs>
     </el-card>
     <!-- 添加参数对话框 -->
-    <el-dialog v-model="addDialogVisible"
-               :title="'添加'+titleText"
-               width="50%"
-               @close="addDialogClosed">
+    <el-dialog v-model="addDialogVisible" :title="'添加' + titleText" width="50%" @close="addDialogClosed">
       <!-- 添加参数表单 -->
-      <el-form ref="addFormRef"
-               :model="addForm"
-               :rules="addFormRules"
-               label-width="100px"
-               status-icon>
-        <el-form-item :label="titleText"
-                      prop="attr_name">
+      <el-form ref="addFormRef" :model="addForm" :rules="addFormRules" label-width="100px" status-icon>
+        <el-form-item :label="titleText" prop="attr_name">
           <el-input v-model="addForm.attr_name" />
         </el-form-item>
       </el-form>
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="addDialogVisible = false">取 消</el-button>
-          <el-button type="primary"
-                     @click="addParams">确 认</el-button>
+          <el-button type="primary" @click="addParams">确 认</el-button>
         </span>
       </template>
     </el-dialog>
     <!-- 编辑参数对话框 -->
-    <el-dialog v-model="editDialogVisible"
-               :title="'编辑'+titleText"
-               width="50%"
-               @close="editDialogClosed">
+    <el-dialog v-model="editDialogVisible" :title="'编辑' + titleText" width="50%" @close="editDialogClosed">
       <!-- 添加参数表单 -->
-      <el-form ref="editFormRef"
-               :model="editForm"
-               :rules="editFormRules"
-               label-width="100px"
-               status-icon>
-        <el-form-item :label="titleText"
-                      prop="attr_name">
+      <el-form ref="editFormRef" :model="editForm" :rules="editFormRules" label-width="100px" status-icon>
+        <el-form-item :label="titleText" prop="attr_name">
           <el-input v-model="editForm.attr_name" />
         </el-form-item>
       </el-form>
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="editDialogVisible = false">取 消</el-button>
-          <el-button type="primary"
-                     @click="editParams">确 认</el-button>
+          <el-button type="primary" @click="editParams">确 认</el-button>
         </span>
       </template>
     </el-dialog>
@@ -298,12 +245,33 @@ export default {
       this.$message.success('删除属性成功')
     },
     // 新增属性标签,输入完触发的事件
-    handleInputConfirm () {
+    handleInputConfirm (row) {
+      // 输入内容为空
+      if (row.inputValue.trim().length === 0) {
+        row.inputVisible = false
+        row.inputValue = ''
+        return
+      }
+      row.attr_vals.push(row.inputValue)
+      row.inputValue = ''
+      const { data: res } = this.$http.put('categories/' + this.cateId + '/attributes/' + row.attr_id, {
+        attr_name: row.attr_name,
+        attr_sel: this.activeName,
+        attr_vals: row.attr_vals.join(' ')
+      })
+      if (res.meta.status !== 200) {
+        return this.$message.error('保存属性失败')
+      }
+      this.$message.success('保存属性成功')
       console.log('输入完成')
     },
     // 隐藏按钮 显示输入框
     showInput (row) {
       row.inputVisible = true
+      // 页面上的元素重新渲染之后 才会指定回调函数中的代码
+      this.$nextTick(() => {
+        this.$refs.saveTagInput.$refs.input.focus();
+      });
       console.log(row)
     }
   },
@@ -335,9 +303,11 @@ export default {
 .cat_opt {
   margin: 15px 0;
 }
+
 .el-tag {
   margin: 10px;
 }
+
 .input-new-tag {
   width: 120px;
 }

@@ -3,51 +3,38 @@
     <!-- 头部区域 -->
     <el-header>
       <div class="header-logo">
-        <img src="../assets/logo2.png"
-             alt="">
+        <img src="../assets/logo2.png" alt="">
         <span>电商后台管理系统</span>
       </div>
-      <el-button type="info"
-                 @click="logout">退出</el-button>
+      <el-button type="info" @click="logout">退出</el-button>
     </el-header>
     <!-- 页面主体区域 -->
     <el-container>
       <!-- 侧边栏 -->
-      <el-aside :width="isCollapse?'64px':'200px'">
-        <div class="toggle-button"
-             @click="toggleCollapse">|||</div>
-        <el-menu active-text-color="#409EFF"
-                 background-color="#333744"
-                 text-color="#fff"
-                 :unique-opened="true"
-                 :collapse="isCollapse"
-                 :collapse-transition="false"
-                 router
-                 :default-active="activePath">
+      <el-aside :width="isCollapse ? '64px' : '200px'">
+        <div class="toggle-button" @click="toggleCollapse">|||</div>
+        <el-menu active-text-color="#409EFF" background-color="#333744" text-color="#fff" :unique-opened="true"
+          :collapse="isCollapse" :collapse-transition="false" router :default-active="activePath">
           <!-- 一级菜单 -->
-          <el-sub-menu :index="item.id + ''"
-                       v-for="item in menuList"
-                       :key="item.id">
+          <el-submenu :index="item.id + ''" v-for="item in menuList" :key="item.id">
             <template #title>
               <!-- 图标 -->
               <el-icon :class="iconObj[item.id]">
               </el-icon>
               <!-- 文本 -->
-              <span>{{item.authName}}</span>
+              <span>{{ item.authName }}</span>
             </template>
             <!-- 二级菜单 -->
-            <el-menu-item :index="'/' + subItem.path"
-                          v-for="subItem in item.children"
-                          :key="subItem.id"
-                          @click="saveActivePath('/' + subItem.path)">
+            <el-menu-item :index="'/' + subItem.path" v-for="subItem in item.children" :key="subItem.id"
+              @click="saveActivePath('/' + subItem.path)">
               <!-- 图标 -->
               <el-icon>
                 <Menu />
               </el-icon>
               <!-- 文本 -->
-              <span>{{subItem.authName}}</span>
+              <span>{{ subItem.authName }}</span>
             </el-menu-item>
-          </el-sub-menu>
+          </el-submenu>
         </el-menu>
       </el-aside>
       <!-- 右侧内容主体区域 -->
@@ -110,16 +97,20 @@ export default {
   align-items: center;
   color: #ffff;
   font-size: 20px;
-  > div {
+
+  >div {
     display: flex;
     align-items: center;
+
     span {
       margin-left: 15px;
     }
   }
 }
+
 .el-aside {
   background-color: #333744;
+
   .el-menu {
     border-right: none;
   }
