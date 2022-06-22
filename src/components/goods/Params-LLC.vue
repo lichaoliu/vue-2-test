@@ -25,7 +25,7 @@
             <el-table-column type="expand">
               <template slot-scope="scope">
                 <!-- 显示参数标签 -->
-                <el-tag v-for="(item, i) in scope.row.attr_vals" :key="i" closable>
+                <el-tag v-for="(item, i) in scope.row.attr_vals" :key="i" closable @close="handleClose(i, scope.row)">
                   {{ item }}
                 </el-tag>
                 <!-- 新增属性标签 -->
@@ -52,7 +52,20 @@
           </el-button>
           <!-- 静态参数表格 -->
           <el-table :data="onlyTableData" :border="true" stripe>
-            <el-table-column type="expand"></el-table-column>
+            <el-table-column type="expand">
+              <template slot-scope="scope">
+                <!-- 显示参数标签 -->
+                <el-tag v-for="(item, i) in scope.row.attr_vals" :key="i" closable @close="handleClose(i, scope.row)">
+                  {{ item }}
+                </el-tag>
+                <!-- 新增属性标签 -->
+                <el-input class="input-new-tag" v-if="scope.row.inputVisible" v-model="scope.row.inputValue"
+                  ref="saveTagInput" size="small" @keyup.enter.native="handleInputConfirm(scope.row)"
+                  @blur="handleInputConfirm(scope.row)">
+                </el-input>
+                <el-button v-else size="small" @click="showInput(scope.row)">+ New Tag</el-button>
+              </template>
+            </el-table-column>
             <el-table-column type="index"></el-table-column>
             <el-table-column label="属性名称" prop="attr_name"></el-table-column>
             <el-table-column label="操作">
@@ -160,6 +173,8 @@ export default {
     async getParamsData () {
       if (this.selectedCateKeys.length !== 3) {
         this.selectedCateKeys = []
+        this.manyTableData = []
+        this.onlyTableData = []
         return
       }
       // 根据所选分类id 和 当前所处面板，获取对应参数
@@ -254,16 +269,7 @@ export default {
       }
       row.attr_vals.push(row.inputValue)
       row.inputValue = ''
-      const { data: res } = this.$http.put('categories/' + this.cateId + '/attributes/' + row.attr_id, {
-        attr_name: row.attr_name,
-        attr_sel: this.activeName,
-        attr_vals: row.attr_vals.join(' ')
-      })
-      if (res.meta.status !== 200) {
-        return this.$message.error('保存属性失败')
-      }
-      this.$message.success('保存属性成功')
-      console.log('输入完成')
+      this.saveAttrVals(row)
     },
     // 隐藏按钮 显示输入框
     showInput (row) {
@@ -273,6 +279,24 @@ export default {
         this.$refs.saveTagInput.$refs.input.focus();
       });
       console.log(row)
+    },
+    // 保存属性
+    async saveAttrVals (row) {
+      const { data: res } = await this.$http.put('categories/' + this.cateId + '/attributes/' + row.attr_id, {
+        attr_name: row.attr_name,
+        attr_sel: row.attr_sel,
+        attr_vals: row.attr_vals.join(' ')
+      })
+      console.log(res);
+      if (res.meta.status !== 200) {
+        return this.$message.error('保存属性失败')
+      }
+      this.$message.success('保存属性成功')
+    },
+    // 删除属性
+    handleClose (i, row) {
+      row.attr_vals.splice(i, 1)
+      this.saveAttrVals(row)
     }
   },
   computed: {
