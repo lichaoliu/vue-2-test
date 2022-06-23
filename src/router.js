@@ -8,6 +8,8 @@ import Rigths from './components/power/Rigths-LLC.vue'
 import Roles from './components/power/Roles-LLC.vue'
 import Cate from './components/goods/Cate-LLC.vue'
 import Params from './components/goods/Params-LLC.vue'
+import List from './components/goods/List-LLC.vue'
+import Add from './components/goods/Goods-Add.vue'
 
 Vue.use(Router)
 
@@ -40,6 +42,12 @@ export default new Router({
     }, {
       path: '/params',
       component: Params
+    }, {
+      path: '/goods',
+      component: List
+    }, {
+      path: '/goods/add',
+      component: Add
     }]
   }]
 })
