@@ -50,11 +50,24 @@
               <el-input v-model="item.attr_vals"></el-input>
             </el-form-item>
           </el-tab-pane>
-          <el-tab-pane label="商品图片" name="3">商品图片</el-tab-pane>
-          <el-tab-pane label="商品内容" name="4">商品内容</el-tab-pane>
+          <el-tab-pane label="商品图片" name="3">
+            <el-upload :action="uploadURL" :on-preview="handlePreview" :on-remove="handleRemove" list-type="picture"
+              :headers="headerObj" :on-success="handleSuccess">
+              <el-button size="small" type="primary">点击上传</el-button>
+              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+            </el-upload>
+          </el-tab-pane>
+          <el-tab-pane label="商品内容" name="4">
+            <quill-editor ref="myQuillEditor" v-model="goods_introduce" />
+            <el-button type="primary" class="btnAdd">添加商品</el-button>
+          </el-tab-pane>
         </el-tabs>
       </el-form>
     </el-card>
+    <!-- 预览图片 -->
+    <el-dialog title="图片预览" :visible.sync="previewVisible" width="50%">
+      <img :src="previewFileUrl" width="100%" />
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -70,7 +83,9 @@ export default {
         goods_weight: 0,
         goods_number: 0,
         // 商品分类数组
-        goods_cat: []
+        goods_cat: [],
+        // 上传图片临时路径
+        pics: []
       },
       // 添加商品校验
       addFormRules: {
@@ -100,7 +115,17 @@ export default {
       // 动态参数列表数据
       manyTableData: [],
       // 静态参数列表数据
-      onlyTableData: []
+      onlyTableData: [],
+      // 图片上传地址
+      uploadURL: 'http://127.0.0.1:8888/api/private/v1/upload',
+      headerObj: {
+        Authorization: window.sessionStorage.getItem('token')
+      },
+      // 预览图片地址
+      previewFileUrl: '',
+      previewVisible: false,
+      //商品详情描述
+      goods_introduce: ''
     }
   },
   created () {
@@ -149,6 +174,27 @@ export default {
         this.onlyTableData = res.data
         console.log(this.onlyTableData)
       }
+    },
+    // 图片预览
+    handlePreview (file) {
+      console.log(file)
+      this.previewFileUrl = file.response.data.url
+      console.log(this.previewFileUrl)
+      this.previewVisible = true
+    },
+    // 图片删除
+    handleRemove (file) {
+      const tmpPath = file.response.data.tmp_path
+      const index = this.addForm.pics.findIndex(x => x.pic === tmpPath)
+      this.addForm.pics.splice(index, 1)
+      console.log(this.addForm)
+    },
+    // 上传成功
+    handleSuccess (response) {
+      console.log(response)
+      const picInfo = {}
+      picInfo.pic = response.data.tmp_path
+      this.addForm.pics.push(picInfo)
     }
   },
   // 三级商品分类id
@@ -166,5 +212,9 @@ export default {
 <style lang="less" scoped>
 .el-checkbox {
   margin: 0 10px 0 0 !important;
+}
+
+.btnAdd {
+  margin-top: 15px;
 }
 </style>
