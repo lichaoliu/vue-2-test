@@ -10,6 +10,7 @@ import Cate from './components/goods/Cate-LLC.vue'
 import Params from './components/goods/Params-LLC.vue'
 import List from './components/goods/List-LLC.vue'
 import Add from './components/goods/Goods-Add.vue'
+import Order from './components/order/Order-LLC.vue'
 
 Vue.use(Router)
 
@@ -48,6 +49,9 @@ export default new Router({
     }, {
       path: '/goods/add',
       component: Add
+    }, {
+      path: '/orders',
+      component: Order
     }]
   }]
 })
