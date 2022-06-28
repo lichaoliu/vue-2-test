@@ -11,6 +11,7 @@ import Params from './components/goods/Params-LLC.vue'
 import List from './components/goods/List-LLC.vue'
 import Add from './components/goods/Goods-Add.vue'
 import Order from './components/order/Order-LLC.vue'
+import Report from './components/report/Report-LLC.vue'
 
 Vue.use(Router)
 
@@ -52,6 +53,9 @@ export default new Router({
     }, {
       path: '/orders',
       component: Order
+    }, {
+      path: '/reports',
+      component: Report
     }]
   }]
 })
